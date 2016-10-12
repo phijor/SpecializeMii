@@ -26,7 +26,12 @@ void mii_set_special(Mii *mii, MII_SPECIALNESS special)
 {
     mii->specialness = special;
     if (special == MII_SPECIAL) {
-        mii->copyable = 0;
+        mii->copyable        = 0;
         mii->disable_sharing = 1;
     }
+}
+
+bool mii_is_valid(Mii *mii)
+{
+    return mii->mii_id != 0;
 }

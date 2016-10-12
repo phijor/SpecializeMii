@@ -41,6 +41,12 @@ void print_mii_special_list(Mii *miis,
     size_t offset = indicator - (indicator % PAGELEN);
     size_t end    = (len > offset + PAGELEN) ? offset + PAGELEN : len;
     for (size_t i = offset; i < end; i++) {
+        if (desc[i] == NULL || !mii_is_valid(&miis[i])) {
+            printf("%c " COLORIZE(2;37, "[---] === empty slot ===")"\n",
+                   i == indicator ? '>' : ' ');
+            continue;
+        }
+
         printf("%c [%s] @ (%02d:%02d) %s\n",
                i == indicator ? '>' : ' ',
                mii_get_special(&miis[i]) == MII_SPECIAL ? COLORIZE(33, "yes")
@@ -136,7 +142,7 @@ int main(void)
     CFL_DB db;
     Result res;
     Mii *miis         = NULL;
-    size_t miicount   = 0;
+    size_t last_mii   = 0;
     char **miistrings = NULL;
 
     res = cfldb_open(&db);
@@ -150,23 +156,32 @@ int main(void)
     }
 
     miis     = cfldb_get_mii_array(&db);
-    miicount = cfldb_get_mii_count(&db);
+    last_mii = cfldb_get_last_mii_index(&db);
 
-    if (miis == NULL || miicount == 0) {
+    if (miis == NULL || last_mii == 0) {
         cfldb_close(&db);
         hang("Database corrupted or no Miis found!", 0);
     }
 
-    miistrings = malloc(miicount * sizeof(miistrings[0]));
+    miistrings = malloc(last_mii * sizeof(miistrings[0]));
 
-    u8 utf8name[20];
-    u8 utf8author[20];
-    for (size_t i = 0; i < miicount; i++) {
+    for (size_t i = 0; i < last_mii; i++) {
+        u8 utf8name[20];
+        u8 utf8author[20];
+
+        if (!mii_is_valid(&miis[i])) {
+            miistrings[i] = NULL;
+            continue;
+        }
+
         memset(utf8name, '\0', 20);
-        utf16_to_utf8(utf8name, miis[i].name, 10);
         memset(utf8author, '\0', 20);
+
+        utf16_to_utf8(utf8name, miis[i].name, 10);
         utf16_to_utf8(utf8author, miis[i].author, 10);
+
         miistrings[i] = malloc(80 * sizeof(char));
+
         snprintf(miistrings[i],
                  80,
                  COLORIZE(36, "%s") " by " COLORIZE(35, "%s"),
@@ -176,7 +191,7 @@ int main(void)
 
     print_usage();
     u8 index = 0;
-    print_mii_special_list(miis, miistrings, miicount, index);
+    print_mii_special_list(miis, miistrings, last_mii, index);
 
     while (aptMainLoop()) {
 
@@ -190,27 +205,27 @@ int main(void)
         }
 
         if (kDown & KEY_UP) {
-            index += miicount - 1;
-            index %= miicount;
-            print_mii_special_list(miis, miistrings, miicount, index);
+            index += last_mii - 1;
+            index %= last_mii;
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
         if (kDown & KEY_DOWN) {
             index++;
-            index %= miicount;
-            print_mii_special_list(miis, miistrings, miicount, index);
+            index %= last_mii;
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
-        if (kDown & KEY_LEFT && miicount > PAGELEN) {
+        if (kDown & KEY_LEFT && last_mii > PAGELEN) {
             index += PAGELEN - 1;
-            index %= miicount;
-            print_mii_special_list(miis, miistrings, miicount, index);
+            index %= last_mii;
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
-        if (kDown & KEY_RIGHT && miicount > PAGELEN) {
+        if (kDown & KEY_RIGHT && last_mii > PAGELEN) {
             index += PAGELEN;
-            index %= miicount;
-            print_mii_special_list(miis, miistrings, miicount, index);
+            index %= last_mii;
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
         if (kDown & KEY_A) {
@@ -225,11 +240,11 @@ int main(void)
                            "No, I would rather not.");
                 if (choice)
                     mii_set_special(cur_mii, !specialness);
-            } else {
+            } else if (mii_is_valid(cur_mii)) {
                 mii_set_special(cur_mii, !specialness);
             }
 
-            print_mii_special_list(miis, miistrings, miicount, index);
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
         if (kDown & KEY_SELECT) {
@@ -244,13 +259,13 @@ int main(void)
                 }
                 printf("done.");
             }
-            print_mii_special_list(miis, miistrings, miicount, index);
+            print_mii_special_list(miis, miistrings, last_mii, index);
         }
 
         gfxFlushBuffers();
     }
 
-    for (size_t i = 0; i < miicount; i++) {
+    for (size_t i = 0; i < last_mii; i++) {
         free(miistrings[i]);
     }
     free(miistrings);

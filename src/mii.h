@@ -139,4 +139,6 @@ void mii_set_special(Mii *mii, MII_SPECIALNESS special);
 bool mii_is_shareable(Mii *mii);
 void mii_set_shareable(Mii *mii, bool shareable);
 
+bool mii_is_valid(Mii *mii);
+
 #endif /* ----- #ifndef MII_H ----- */

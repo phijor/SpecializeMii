@@ -56,7 +56,7 @@ int cfldb_check_integrity(CFL_DB const *const db);
 u16 cfldb_calculate_checksum(CFL_DB const *const db);
 u16 cfldb_fix_checksum(CFL_DB *const db);
 
-size_t cfldb_get_mii_count(CFL_DB const *const db);
+size_t cfldb_get_last_mii_index(CFL_DB const *const db);
 Mii *cfldb_get_mii_array(CFL_DB const *const db);
 
 #endif /* ----- #ifndef CFLDB_H ----- */

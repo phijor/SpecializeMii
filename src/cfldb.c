@@ -145,14 +145,14 @@ u16 cfldb_fix_checksum(CFL_DB *const db)
     return checksum;
 }
 
-size_t cfldb_get_mii_count(CFL_DB const *const db)
+size_t cfldb_get_last_mii_index(CFL_DB const *const db)
 {
-    Mii *mii     = db->data->miimaker.miis;
-    size_t count = 0;
-    while (mii[count].mii_id != 0) {
-        count++;
+    Mii *miis   = db->data->miimaker.miis;
+    size_t last = CFLDB_MIIMAKER_MAX - 1;
+    while (!mii_is_valid(&miis[last])) {
+        last--;
     }
-    return count;
+    return last;
 }
 
 Mii *cfldb_get_mii_array(CFL_DB const *const db)
