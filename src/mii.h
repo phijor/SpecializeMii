@@ -1,6 +1,8 @@
 #ifndef MII_H
 #define MII_H
 
+#include "common.h"
+
 #include <3ds/types.h>
 
 typedef enum MII_SPECIALNESS_t {
@@ -112,11 +114,6 @@ typedef struct Mii_t {
     u16 author[10];
 } Mii;
 
-#define _assert_offset(type, member, offset)                                   \
-    _Static_assert(offsetof(type, member) == (offset),                         \
-                   "Offset assertion: " #type "." #member                      \
-                   " is not located at offset " #offset "!\n")
-
 _assert_offset(Mii, mii_id, 0x00);
 _assert_offset(Mii, copyable, 0x01);
 _assert_offset(Mii, position.raw, 0x02);
@@ -132,8 +129,6 @@ _assert_offset(Mii, eyebrow.raw, 0x38);
 _assert_offset(Mii, author, 0x48);
 
 _Static_assert(sizeof(Mii) == 0x5c, "Mii is of wrong size!\n");
-
-#undef _assert_offset
 
 MII_COPYABLE mii_is_copyable(Mii *mii);
 void mii_set_copyable(Mii *mii, MII_COPYABLE copyable);
