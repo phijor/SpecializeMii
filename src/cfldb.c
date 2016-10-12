@@ -115,19 +115,19 @@ Result cfldb_write(CFL_DB *const db)
 
 u16 cfldb_get_checksum(CFL_DB const *const db)
 {
-    u16 chck = *(u16 *) CFLDB_DATA_AT(*db, 0xc81e);
+    u16 checksum = db->data->checksum;
     // Checksum is stored in big-endian format
-    return (chck << 8) | (chck >> 8);
+    return (checksum << 8) | (checksum >> 8);
 }
 
 void cfldb_set_checksum(CFL_DB *const db, u16 const checksum)
 {
-    *(u16 *) CFLDB_DATA_AT(*db, 0xc81e) = (checksum << 8) | (checksum >> 8);
+    db->data->checksum = (checksum << 8) | (checksum >> 8);
 }
 
 u16 cfldb_calculate_checksum(CFL_DB const *const db)
 {
-    return crc_crc16_ccitt(db->data, 0xc81e, 0x0000);
+    return crc_crc16_ccitt(db->data, offsetof(CFL_DB_Layout, checksum), 0x0000);
 }
 
 int cfldb_check_integrity(CFL_DB const *const db)
@@ -147,7 +147,7 @@ u16 cfldb_fix_checksum(CFL_DB *const db)
 
 size_t cfldb_get_mii_count(CFL_DB const *const db)
 {
-    Mii *mii     = CFLDB_DATA_AT(*db, 0x08);
+    Mii *mii     = db->data->miimaker.miis;
     size_t count = 0;
     while (mii[count].mii_id != 0) {
         count++;

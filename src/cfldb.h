@@ -1,6 +1,7 @@
 #ifndef CFLDB_H
 #define CFLDB_H
 
+#include "common.h"
 #include "mii.h"
 
 #include <3ds/result.h>
@@ -18,8 +19,25 @@
 
 #define CFLDB_DATA_AT(db, offset) ((void *) ((u8 *) ((db).data)) + (offset))
 
+#define CFLDB_MIIMAKER_MAGIC 0x474f4643 // "CFOG"
+#define CFLDB_MIIMAKER_MAX 100
+
+typedef struct CFL_DB_MiiMaker_t {
+    u32 magic;
+    u32 _unk_0x04;
+    Mii miis[CFLDB_MIIMAKER_MAX];
+} CFL_DB_MiiMaker;
+
+typedef struct CFL_DB_Layout_t {
+    CFL_DB_MiiMaker miimaker;
+    u8 _cfhe_section[0xa426];
+    u16 checksum;
+} CFL_DB_Layout;
+
+_assert_offset(CFL_DB_Layout, checksum, 0xc81e);
+
 typedef struct CFL_DB_t {
-    void *data;
+    CFL_DB_Layout * data;
     u64 size;
     FS_Archive archive;
     Handle fhandle;
