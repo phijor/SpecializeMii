@@ -58,9 +58,22 @@ typedef struct Mii_t {
 
     u32 _unk_0x08;
 
-    u8 _pad_0x0c : 7;
-    u8 specialness : 1;
-    u8 _unk_0x0d[3];
+    union {
+        // This unsigned 32bit integer is stored in big-endian and holds the
+        // date of creation in its lower 28 bit:
+        //
+        // seconds since 01/01/2010 00:00:00
+        //   = (date_of_creation[bit 0 .. bit 27]) * 2
+        u32 date_of_creation;
+
+        // Non special Miis have bit 31 of aforementioned big-endian word set,
+        // which corresponds to bit 8 in little endian, which the 3DS uses.
+        struct {
+            u32 : 7;
+            u32 specialness : 1;
+            u32 : 24;
+        };
+    };
 
     u8 mac[6];
     u8 _pad_0x16[2];
@@ -109,6 +122,7 @@ _assert_offset(Mii, copyable, 0x01);
 _assert_offset(Mii, position.raw, 0x02);
 _assert_offset(Mii, category, 0x03);
 _assert_offset(Mii, sys_id, 0x04);
+_assert_offset(Mii, date_of_creation, 0x0c);
 _assert_offset(Mii, mac, 0x10);
 _assert_offset(Mii, name, 0x1a);
 _assert_offset(Mii, width, 0x2e);
