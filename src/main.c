@@ -26,7 +26,7 @@
 
 #define PAGELEN 25
 
-#define COLORIZE(color, str) "\e["#color"m" str "\e[0m"
+#define COLORIZE(color, str) "\e[" #color "m" str "\e[0m"
 
 PrintConsole c_info;
 PrintConsole c_default;
@@ -49,7 +49,7 @@ void print_mii_special_list(Mii *miis,
 
         printf("%c [%s] @ (%02d:%02d) %s\n",
                i == indicator ? '>' : ' ',
-               mii_get_special(&miis[i]) == MII_SPECIAL ? COLORIZE(33, "yes")
+               mii_get_special(&miis[i]) == MII_SPECIAL ? COLORIZE(1;33, "yes")
                                                         : " no",
                miis[i].position.page + 1,
                miis[i].position.slot + 1,
@@ -60,6 +60,7 @@ void print_mii_special_list(Mii *miis,
 void print_usage()
 {
     PrintConsole *prev = consoleSelect(&c_info);
+    // clang-format off
     printf(APPLICATION_NAME " - " APPLICATION_REV ":\n"
             "\n"
            "[A]      - Toggle special/non-special\n"
@@ -74,7 +75,7 @@ void print_usage()
            "does *not* support  UTF16-symbols in\n"
            "names, such as Hiragana, Kanji, etc.\n"
            "\n"
-           COLORIZE(31, "Important:\n")
+           COLORIZE(1;31, "Important:\n")
            "Setting a special Mii "COLORIZE(33, "*SHAREABLE*")" or\n"
            COLORIZE(33, "*COPYABLE*")" in MiiMaker "COLORIZE(33, "*CRASHES*")" the\n"
            "system and is generally a bad idea.\n"
@@ -82,6 +83,7 @@ void print_usage()
            "I AM NOT RESPONSIBLE FOR EVENTUAL\n"
            "DAMAGES TO YOUR SYSTEM OR DATA.\n"
            );
+    // clang-format on
     consoleSelect(prev);
 }
 

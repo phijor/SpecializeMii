@@ -37,7 +37,7 @@ typedef struct CFL_DB_Layout_t {
 _assert_offset(CFL_DB_Layout, checksum, 0xc81e);
 
 typedef struct CFL_DB_t {
-    CFL_DB_Layout * data;
+    CFL_DB_Layout *data;
     u64 size;
     FS_Archive archive;
     Handle fhandle;
