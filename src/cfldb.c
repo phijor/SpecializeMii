@@ -157,5 +157,10 @@ size_t cfldb_get_mii_count(CFL_DB const *const db)
 
 Mii *cfldb_get_mii_array(CFL_DB const *const db)
 {
-    return CFLDB_DATA_AT(*db, 0x08);
+    CFL_DB_MiiMaker *miimaker = &db->data->miimaker;
+    if (miimaker->magic == CFLDB_MIIMAKER_MAGIC) {
+        return miimaker->miis;
+    }
+
+    return NULL;
 }

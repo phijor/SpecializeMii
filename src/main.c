@@ -152,8 +152,9 @@ int main(void)
     miis     = cfldb_get_mii_array(&db);
     miicount = cfldb_get_mii_count(&db);
 
-    if (miicount == 0) {
-        hang("No Miis found in database", 0);
+    if (miis == NULL || miicount == 0) {
+        cfldb_close(&db);
+        hang("Database corrupted or no Miis found!", 0);
     }
 
     miistrings = malloc(miicount * sizeof(miistrings[0]));
