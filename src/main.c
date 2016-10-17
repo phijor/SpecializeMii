@@ -145,7 +145,7 @@ int main(void)
     CFL_DB db;
     Result res        = 0;
     Mii *miis         = NULL;
-    size_t last_mii   = 0;
+    int mii_count     = 0;
     char **miistrings = NULL;
 
     res = cfldb_open(&db);
@@ -160,10 +160,7 @@ int main(void)
 
     hidScanInput();
     if (hidKeysDown() & KEY_X) {
-        bool choice =
-            prompt("Dump database to file?",
-                   "yes",
-                   "no");
+        bool choice = prompt("Dump database to file?", "yes", "no");
 
         if (choice) {
             char path[40]        = {'\0'};
@@ -180,17 +177,18 @@ int main(void)
         }
     }
 
-    miis     = cfldb_get_mii_array(&db);
-    last_mii = cfldb_get_last_mii_index(&db);
+    miis      = cfldb_get_mii_array(&db);
+    mii_count = cfldb_get_last_mii_index(&db) + 1;
 
-    if (miis == NULL || last_mii == 0) {
+    if (miis == NULL || mii_count <= 0) {
         cfldb_close(&db);
-        hang("Database corrupted or no Miis found!", 0);
+        hang("Failed to find Mii in database",
+             MAKERESULT(RL_INFO, RS_NOTFOUND, RM_APPLICATION, RD_NOT_FOUND));
     }
 
-    miistrings = malloc(last_mii * sizeof(miistrings[0]));
+    miistrings = malloc(mii_count * sizeof(miistrings[0]));
 
-    for (size_t i = 0; i < last_mii; i++) {
+    for (int i = 0; i < mii_count; i++) {
         u8 utf8name[20];
         u8 utf8author[20];
 
@@ -216,7 +214,7 @@ int main(void)
 
     print_usage();
     u8 index = 0;
-    print_mii_special_list(miis, miistrings, last_mii, index);
+    print_mii_special_list(miis, miistrings, mii_count, index);
 
     while (aptMainLoop()) {
 
@@ -230,27 +228,27 @@ int main(void)
         }
 
         if (kDown & KEY_UP) {
-            index += last_mii - 1;
-            index %= last_mii;
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            index += mii_count - 1;
+            index %= mii_count;
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
         if (kDown & KEY_DOWN) {
             index++;
-            index %= last_mii;
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            index %= mii_count;
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
-        if (kDown & KEY_LEFT && last_mii > PAGELEN) {
+        if (kDown & KEY_LEFT && mii_count > PAGELEN) {
             index += PAGELEN - 1;
-            index %= last_mii;
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            index %= mii_count;
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
-        if (kDown & KEY_RIGHT && last_mii > PAGELEN) {
+        if (kDown & KEY_RIGHT && mii_count > PAGELEN) {
             index += PAGELEN;
-            index %= last_mii;
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            index %= mii_count;
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
         if (kDown & KEY_A) {
@@ -269,7 +267,7 @@ int main(void)
                 mii_set_special(cur_mii, !specialness);
             }
 
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
         if (kDown & KEY_SELECT) {
@@ -284,13 +282,13 @@ int main(void)
                 }
                 printf("done.");
             }
-            print_mii_special_list(miis, miistrings, last_mii, index);
+            print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
         gfxFlushBuffers();
     }
 
-    for (size_t i = 0; i < last_mii; i++) {
+    for (int i = 0; i < mii_count; i++) {
         free(miistrings[i]);
     }
     free(miistrings);
