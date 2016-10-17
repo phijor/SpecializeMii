@@ -144,7 +144,7 @@ Result cfldb_dump_to_sdmc(CFL_DB const *const db, char const *const path)
     res = (bytes_written != db->size) ? CFLDB_ERR_WRONG_SIZE : 0;
 
 failure_close_file:
-    return FSFILE_Close(h_dump);
+    FSFILE_Close(h_dump);
 failure_close_archive:
     FSUSER_CloseArchive(a_sdmc);
 failure:
