@@ -49,6 +49,8 @@ Result cfldb_close(CFL_DB *const db);
 Result cfldb_read(CFL_DB *const db);
 Result cfldb_write(CFL_DB *const db);
 
+Result cfldb_dump_to_sdmc(CFL_DB const *const db, char const *const path);
+
 u16 cfldb_get_checksum(CFL_DB const *const db);
 void cfldb_set_checksum(CFL_DB *const db, u16 const checksum);
 

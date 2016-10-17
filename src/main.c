@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "cfldb.h"
 #include "crc.h"
@@ -142,7 +143,7 @@ int main(void)
     consoleSelect(&c_default);
 
     CFL_DB db;
-    Result res;
+    Result res        = 0;
     Mii *miis         = NULL;
     size_t last_mii   = 0;
     char **miistrings = NULL;
@@ -155,6 +156,28 @@ int main(void)
     res = cfldb_read(&db);
     if (R_FAILED(res)) {
         hang("Failed to read CFL_DB.dat", res);
+    }
+
+    hidScanInput();
+    if (hidKeysDown() & KEY_X) {
+        bool choice =
+            prompt("Dump database to file?",
+                   "yes",
+                   "no");
+
+        if (choice) {
+            char path[40]        = {'\0'};
+            const time_t curtime = time(NULL);
+            struct tm *date      = gmtime(&curtime);
+            strftime(path, 40, "/%F_%H-%M-%S_CFL_DB.dat", date);
+
+            printf("Dumping datebase to:\n  sdmc:%s...\n", path);
+            res = cfldb_dump_to_sdmc(&db, path);
+            if (R_FAILED(res)) {
+                cfldb_close(&db);
+                hang("Failed to dump database", res);
+            }
+        }
     }
 
     miis     = cfldb_get_mii_array(&db);

@@ -113,6 +113,44 @@ Result cfldb_write(CFL_DB *const db)
     return 0;
 }
 
+Result cfldb_dump_to_sdmc(CFL_DB const *const db, char const *const path)
+{
+
+    Handle h_dump;
+    FS_Archive a_sdmc;
+    Result res;
+
+    res = FSUSER_OpenArchive(&a_sdmc, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
+    if (R_FAILED(res)) {
+        goto failure;
+    }
+
+    res = FSUSER_OpenFileDirectly(&h_dump,
+                                  ARCHIVE_SDMC,
+                                  fsMakePath(PATH_EMPTY, ""),
+                                  fsMakePath(PATH_ASCII, path),
+                                  FS_OPEN_WRITE | FS_OPEN_CREATE,
+                                  0);
+    if (R_FAILED(res)) {
+        goto failure_close_archive;
+    }
+
+    u32 bytes_written;
+    res = FSFILE_Write(h_dump, &bytes_written, 0, db->data, db->size, 0);
+    if (R_FAILED(res)) {
+        goto failure_close_file;
+    }
+
+    res = (bytes_written != db->size) ? CFLDB_ERR_WRONG_SIZE : 0;
+
+failure_close_file:
+    return FSFILE_Close(h_dump);
+failure_close_archive:
+    FSUSER_CloseArchive(a_sdmc);
+failure:
+    return res;
+}
+
 u16 cfldb_get_checksum(CFL_DB const *const db)
 {
     u16 checksum = db->data->checksum;
