@@ -119,14 +119,17 @@ hang(char const *const desc, Result const errcode)
             "\033[31mAn error occured!\033[0m\n"
             "  Description: %s\n"
             "  Error-Code:  0x%lx\n"
+            "  Error-Info:  %s\n"
             "\n"
             "Press START to exit the application.\n",
             desc,
-            (long int) errcode);
+            (long int) errcode,
+            osStrError(errcode));
 
     while (aptMainLoop() && !(hidKeysDown() & KEY_START)) {
         hidScanInput();
     }
+    gfxExit();
     exit(errcode);
 }
 
