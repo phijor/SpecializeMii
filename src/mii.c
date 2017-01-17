@@ -31,6 +31,19 @@ void mii_set_special(Mii *mii, MII_SPECIALNESS special)
     }
 }
 
+MII_SHAREABLE mii_is_shareable(Mii *mii)
+{
+    return (mii->disable_sharing) ? MII_SHAREABLE_OFF : MII_SHAREABLE_ON;
+}
+
+void mii_set_shareable(Mii *mii, MII_SHAREABLE shareable)
+{
+    mii->disable_sharing = shareable;
+    if (shareable == MII_SHAREABLE_ON) {
+        mii->specialness = MII_NONSPECIAL;
+    }
+}
+
 bool mii_is_valid(Mii *mii)
 {
     return mii->mii_id != 0;

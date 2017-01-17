@@ -259,14 +259,25 @@ int main(void)
             Mii *cur_mii = &miis[index];
 
             MII_SPECIALNESS specialness = mii_get_special(cur_mii);
-            if (index == 0 && specialness == MII_NONSPECIAL) {
-                bool choice =
-                    prompt("Do you really want to make your personal\n"
-                           "Mii special? This is reported to cause issues.",
-                           "Yes, I am aware that there might be issues.",
-                           "No, I would rather not.");
-                if (choice)
-                    mii_set_special(cur_mii, !specialness);
+            if (index == 0) {
+                switch (specialness) {
+                case MII_SPECIAL:
+                    mii_set_special(cur_mii, MII_NONSPECIAL);
+                    mii_set_copyable(cur_mii, MII_COPYABLE_ON);
+                    mii_set_shareable(cur_mii, MII_SHAREABLE_ON);
+                    break;
+                case MII_NONSPECIAL: {
+                    bool choice =
+                        prompt("Do you really want to make your personal\n"
+                               "Mii special? This is reported to cause issues.",
+                               "Yes, I am aware that there might be issues.",
+                               "No, I would rather not.");
+                    if (choice) {
+                        mii_set_special(cur_mii, MII_SPECIAL);
+                    }
+                    break;
+                }
+                }
             } else if (mii_is_valid(cur_mii)) {
                 mii_set_special(cur_mii, !specialness);
             }

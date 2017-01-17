@@ -15,6 +15,11 @@ typedef enum MII_COPYABLE_t {
     MII_COPYABLE_ON  = 1,
 } MII_COPYABLE;
 
+typedef enum MII_SHAREABLE_t {
+    MII_SHAREABLE_ON  = 0,
+    MII_SHAREABLE_OFF = 1,
+} MII_SHAREABLE;
+
 /* Fuck yeah! Bitfields and compiler dependent struct padding!
  *
  * This is absolutely *NOT* portable in any way, shape or form.
@@ -136,8 +141,8 @@ void mii_set_copyable(Mii *mii, MII_COPYABLE copyable);
 MII_SPECIALNESS mii_get_special(Mii *mii);
 void mii_set_special(Mii *mii, MII_SPECIALNESS special);
 
-bool mii_is_shareable(Mii *mii);
-void mii_set_shareable(Mii *mii, bool shareable);
+MII_SHAREABLE mii_is_shareable(Mii *mii);
+void mii_set_shareable(Mii *mii, MII_SHAREABLE shareable);
 
 bool mii_is_valid(Mii *mii);
 
