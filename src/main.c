@@ -27,7 +27,7 @@
 
 #define PAGELEN 25
 
-#define COLORIZE(color, str) "\e[" #color "m" str "\e[0m"
+#define COLORIZE(color, str) "\e[" color "m" str "\e[0m"
 
 PrintConsole c_info;
 PrintConsole c_default;
@@ -43,15 +43,16 @@ void print_mii_special_list(Mii *miis,
     size_t end    = (len > offset + PAGELEN) ? offset + PAGELEN : len;
     for (size_t i = offset; i < end; i++) {
         if (desc[i] == NULL || !mii_is_valid(&miis[i])) {
-            printf("%c " COLORIZE(2;37, "[---] === empty slot ===")"\n",
+            printf("%c " COLORIZE("2;37", "[---] === empty slot ===") "\n",
                    i == indicator ? '>' : ' ');
             continue;
         }
 
         printf("%c [%s] @ (%02d:%02d) %s\n",
                i == indicator ? '>' : ' ',
-               mii_get_special(&miis[i]) == MII_SPECIAL ? COLORIZE(1;33, "yes")
-                                                        : " no",
+               mii_get_special(&miis[i]) == MII_SPECIAL
+                   ? COLORIZE("1;33", "yes")
+                   : " no",
                miis[i].position.page + 1,
                miis[i].position.slot + 1,
                desc[i]);
@@ -76,9 +77,9 @@ void print_usage()
            "does *not* support  UTF16-symbols in\n"
            "names, such as Hiragana, Kanji, etc.\n"
            "\n"
-           COLORIZE(1;31, "Important:\n")
-           "Setting a special Mii "COLORIZE(33, "*SHAREABLE*")" or\n"
-           COLORIZE(33, "*COPYABLE*")" in MiiMaker "COLORIZE(33, "*CRASHES*")" the\n"
+           COLORIZE("1;31", "Important:\n")
+           "Setting a special Mii "COLORIZE("33", "*SHAREABLE*")" or\n"
+           COLORIZE("33", "*COPYABLE*")" in MiiMaker "COLORIZE("33", "*CRASHES*")" the\n"
            "system and is generally a bad idea.\n"
            "\n"
            "I AM NOT RESPONSIBLE FOR EVENTUAL\n"
@@ -210,7 +211,7 @@ int main(void)
 
         snprintf(miistrings[i],
                  80,
-                 COLORIZE(36, "%s") " by " COLORIZE(35, "%s"),
+                 COLORIZE("36", "%s") " by " COLORIZE("35", "%s"),
                  utf8name,
                  utf8author);
     }
