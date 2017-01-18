@@ -30,6 +30,10 @@ LIBRARY_DIRS := $(DEVKITPRO)/libctru $(PORTLIBS)/3ds $(PORTLIBS)/armv6k
 LIBRARIES := ctru
 
 REVISION = $(shell git describe --abbrev=7 --dirty=-dirty --always)+$(shell git rev-list --count HEAD)
+_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
+ifneq ($(_BRANCH),master)
+	REVISION := $(REVISION)-$(_BRANCH)
+endif
 
 BUILD_FLAGS := -Wextra -O3 \
 	           -DAPPLICATION_NAME=\"$(NAME)\" \
