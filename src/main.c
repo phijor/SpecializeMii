@@ -99,7 +99,8 @@ bool prompt(char const *const msg, char const *const yes, char const *const no)
            yes,
            no);
     u32 key_down = 0;
-    while (1) {
+    while (aptMainLoop()) {
+        gspWaitForVBlank();
         hidScanInput();
         key_down = hidKeysDown();
 
@@ -109,6 +110,7 @@ bool prompt(char const *const msg, char const *const yes, char const *const no)
             return false;
         }
     }
+    return false;
 }
 
 void __attribute__((noreturn))
