@@ -263,7 +263,6 @@ int main(void)
                 switch (specialness) {
                 case MII_SPECIAL:
                     mii_set_special(cur_mii, MII_NONSPECIAL);
-                    mii_set_copyable(cur_mii, MII_COPYABLE_ON);
                     mii_set_shareable(cur_mii, MII_SHAREABLE_ON);
                     break;
                 case MII_NONSPECIAL: {
