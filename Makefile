@@ -52,9 +52,9 @@ REMOTE_IP := $(shell getent hosts n3ds | cut -d ' ' -f 1)
 # 3DS CONFIGURATION #
 
 TITLE := $(NAME)
-DESCRIPTION := Make Miis Special
-AUTHOR := phijor
-PRODUCT_CODE := CTR-P-SMII
+DESCRIPTION := Make Miis Special or make them editable!
+AUTHOR := phijor, Ryccardo
+PRODUCT_CODE := SpecializeMii
 UNIQUE_ID := 0xF3D99
 
 SYSTEM_MODE := 64MB
