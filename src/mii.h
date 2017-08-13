@@ -61,9 +61,10 @@ typedef struct Mii_t {
         };
         u32 mii_id;
     };
-    u32 sys_id;
 
-    u32 _unk_0x08;
+    // Switching to a semantically correct u64 breaks assertions and I don't know if they're wrong or the program itself becomes wrong...
+    u32 sys_id_1;
+    u32 sys_id_2;
 
     union {
         // This unsigned 32bit integer is stored in big-endian and holds the
@@ -123,7 +124,7 @@ _assert_offset(Mii, mii_id, 0x00);
 _assert_offset(Mii, copyable, 0x01);
 _assert_offset(Mii, position.raw, 0x02);
 _assert_offset(Mii, category, 0x03);
-_assert_offset(Mii, sys_id, 0x04);
+_assert_offset(Mii, sys_id_1, 0x04);
 _assert_offset(Mii, date_of_creation, 0x0c);
 _assert_offset(Mii, mac, 0x10);
 _assert_offset(Mii, name, 0x1a);
