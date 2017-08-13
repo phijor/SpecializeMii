@@ -66,6 +66,7 @@ void print_usage()
     printf(APPLICATION_NAME " - " APPLICATION_REV ":\n"
             "\n"
            "[A]      - Toggle special/non-special\n"
+           "[Y]      - Copy ownership<-Pers. Mii\n"
            "[<>^v]   - Navigate Mii list\n"
            "[SELECT] - Save Changes\n"
            "[START]  - Exit\n"
@@ -111,6 +112,18 @@ bool prompt(char const *const msg, char const *const yes, char const *const no)
         }
     }
     return false;
+}
+
+void alert(char const *const msg)
+{
+    printf("\033[2J" "%s\n", msg);
+    u32 key_down = 0;
+    while (aptMainLoop()) {
+        gspWaitForVBlank();
+        hidScanInput();
+        key_down = hidKeysDown();
+        if (key_down) return;
+    }
 }
 
 void __attribute__((noreturn))
@@ -283,6 +296,24 @@ int main(void)
                 mii_set_special(cur_mii, !specialness);
             }
 
+            print_mii_special_list(miis, miistrings, mii_count, index);
+        }
+
+        if (kDown & KEY_Y) {
+            Mii *cur_mii = &miis[index];
+
+	    if (index == 0) {
+                alert("This function copies System ID and MAC from\n"
+		      "the Personal Mii, so it doesn't make sense\n"
+                      "to use it on the Personal Mii!");
+	    } else {
+	        cur_mii->sys_id_1 = miis[0].sys_id_1;
+	        cur_mii->sys_id_2 = miis[0].sys_id_2;
+
+		for (int macDigit = 0; macDigit < 6; macDigit++) {
+			cur_mii->mac[macDigit] = miis[0].mac[macDigit];
+		}
+	    }
             print_mii_special_list(miis, miistrings, mii_count, index);
         }
 
