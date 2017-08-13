@@ -54,7 +54,7 @@ REMOTE_IP := $(shell getent hosts n3ds | cut -d ' ' -f 1)
 TITLE := $(NAME)
 DESCRIPTION := Make Miis Special
 AUTHOR := phijor
-PRODUCT_CODE := CTR-P-SMII
+PRODUCT_CODE := SpecializeMii
 UNIQUE_ID := 0xF3D99
 
 SYSTEM_MODE := 64MB
