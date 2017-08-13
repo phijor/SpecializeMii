@@ -243,7 +243,15 @@ int main(void)
         hidScanInput();
         u32 kDown = hidKeysDown();
         if (kDown & KEY_START) {
-            break;
+
+            bool choice =
+                prompt("Do you really want to exit?\n"
+                       "You will lose unsaved changes, if any.",
+                       "End program.",
+                       "Continue work.");
+            if (choice) break; // keep going to end of program
+            else print_mii_special_list(miis, miistrings, mii_count, index); // refresh screen
+
         }
 
         if (kDown & KEY_UP) {
